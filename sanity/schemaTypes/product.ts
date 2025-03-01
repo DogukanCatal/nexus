@@ -48,10 +48,16 @@ export const product = defineType({
       validation: (Rule) => Rule.required().min(0),
     }),
     defineField({
+      name: "salePercentage",
+      title: "Sale Percentage",
+      type: "number",
+      validation: (Rule) => Rule.min(0),
+    }),
+    defineField({
       name: "category",
       title: "Product Categories",
-      type: "reference",
-      to: [{ type: "productCategory" }],
+      type: "array",
+      of: [{ type: "reference", to: { type: "productCategory" } }],
     }),
     defineField({
       name: "stock",
@@ -69,7 +75,7 @@ export const product = defineType({
     prepare(select) {
       return {
         title: select.title,
-        media: select.media,
+        media: select.media ? select.media[0] : null,
         subtitle: `${select.price} TL`,
       };
     },
