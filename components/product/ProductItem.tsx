@@ -3,7 +3,8 @@ import { Product } from "@/sanity.types";
 import { urlFor } from "@/sanity/lib/image";
 import Image from "next/image";
 import Link from "next/link";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import ProductPrice from "./ProductPrice";
 
 type ProductItemProps = {
   product: Product;
@@ -20,9 +21,7 @@ const ProductItem = ({ product }: ProductItemProps) => {
   if (!product.price || product.price <= 0) {
     return null;
   }
-  // todo delete this console
-  console.log("WE ARE HERE =====>");
-  const saleAmount = product.price * ((product.salePercentage || 100) / 100);
+  const isOutOfStock = product.stock != null && product.stock <= 0;
 
   return (
     <div className="rounded-lg overflow-hidden relative flex flex-col">
@@ -37,13 +36,20 @@ const ProductItem = ({ product }: ProductItemProps) => {
             fill
             alt={product.name || "Product Name"}
             src={
-              isHovered
+              isHovered && product.image[1]
                 ? urlFor(product.image[1]).url()
                 : urlFor(product.image[0]).url()
             }
             loading="lazy"
-            className="object-contain"
+            className="object-cover"
           />
+        )}
+        {isOutOfStock && (
+          <div className="absolute ">
+            <div className="p-2 bg-[#262626] ">
+              <span className="font-semibold text-xs">Out Of Stock</span>
+            </div>
+          </div>
         )}
       </Link>
 
@@ -54,7 +60,9 @@ const ProductItem = ({ product }: ProductItemProps) => {
         >
           {product.name}
         </Link>
-        {product.salePercentage && product.salePercentage > 0 ? (
+        <ProductPrice price={product.price} sale={product.salePercentage} />
+        {/* todo use this or remove */}
+        {/* {product.salePercentage && product.salePercentage > 0 ? (
           <div className="flex">
             <span className="font-semibold text-slate-300 text-sm">
               {(product.price - saleAmount).toFixed(2)} TL
@@ -67,7 +75,7 @@ const ProductItem = ({ product }: ProductItemProps) => {
           <span className="font-semibold text-sm text-slate-300">
             {(product.price || 0).toFixed(2)} TL
           </span>
-        )}
+        )} */}
       </div>
     </div>
   );

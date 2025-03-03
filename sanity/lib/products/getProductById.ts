@@ -16,6 +16,6 @@ export const getProductById = async (id: string) => {
   } catch (error) {
     console.log("Error fetching product by id", error);
 
-    return [];
+    return null;
   }
 };
