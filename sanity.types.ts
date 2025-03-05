@@ -301,7 +301,7 @@ export type GET_PRODUCTS_BY_CATEGORYResult = Array<{
 
 // Source: ./sanity/lib/products/searchProduct.ts
 // Variable: SEARCH_PRODUCT
-// Query: *[_type == 'product' && (        name match "*" + $searchQuery + "*" ||        description match "*" + $searchQuery + "*" ||        slug.current match "*" + $searchQuery + "*" ||        productCategory->title match "*" + $searchQuery + "*" ||        productCategory->slug.current match "*" + $searchQuery + "*"        )]
+// Query: *[_type == 'product' && (        name match "*" + $searchQuery + "*" ||        description match "*" + $searchQuery + "*" ||        slug.current match "*" + $searchQuery + "*" ||        category[]->title match "*" + $searchQuery + "*" ||        category[]->slug.current match "*" + $searchQuery + "*"        )]
 export type SEARCH_PRODUCTResult = Array<{
   _id: string;
   _type: "product";
@@ -343,6 +343,6 @@ declare module "@sanity/client" {
     "\n        *[_type == \"product\"] | order(name asc)\n        ": ALL_PRODUCTS_QUERYResult;
     "\n        *[_type == \"product\" && _id == $id][0] \n        ": PRODUCT_BY_ID_QUERYResult;
     "\n        *[_type == \"product\" && references(*[_type == \"productCategory\" && slug.current == $categorySlug]._id)] | order(name asc)\n        ": GET_PRODUCTS_BY_CATEGORYResult;
-    "\n        *[_type == 'product' && (\n        name match \"*\" + $searchQuery + \"*\" ||\n        description match \"*\" + $searchQuery + \"*\" ||\n        slug.current match \"*\" + $searchQuery + \"*\" ||\n        productCategory->title match \"*\" + $searchQuery + \"*\" ||\n        productCategory->slug.current match \"*\" + $searchQuery + \"*\"\n        )]\n        ": SEARCH_PRODUCTResult;
+    "\n        *[_type == 'product' && (\n        name match \"*\" + $searchQuery + \"*\" ||\n        description match \"*\" + $searchQuery + \"*\" ||\n        slug.current match \"*\" + $searchQuery + \"*\" ||\n        category[]->title match \"*\" + $searchQuery + \"*\" ||\n        category[]->slug.current match \"*\" + $searchQuery + \"*\"\n        )]\n        ": SEARCH_PRODUCTResult;
   }
 }

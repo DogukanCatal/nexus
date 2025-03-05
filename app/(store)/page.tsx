@@ -1,6 +1,5 @@
 import ProductGrid from "@/components/product/ProductGrid";
 import { getAllProducts } from "@/sanity/lib/products/getAllProducts";
-import Image from "next/image";
 
 const Home = async () => {
   const products = await getAllProducts();

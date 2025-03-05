@@ -45,9 +45,9 @@ const ProductItem = ({ product }: ProductItemProps) => {
           />
         )}
         {isOutOfStock && (
-          <div className="absolute ">
-            <div className="p-2 bg-[#262626] ">
-              <span className="font-semibold text-xs">Out Of Stock</span>
+          <div className="relative aspect-square flex items-center justify-center size-full bg-black/50">
+            <div className="p-2 flex items-center justify-center ">
+              <span className="font-bold text-xs">Out Of Stock</span>
             </div>
           </div>
         )}

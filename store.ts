@@ -32,7 +32,7 @@ export const useBasketStore = create<BasketStore>()(
             return {
               items: state.items.map((item) =>
                 item.product._id === product._id
-                  ? { ...item, quantity: item.quantity + 1 } // ✅ Correct return
+                  ? { ...item, quantity: item.quantity + 1 }
                   : item
               ),
             };
