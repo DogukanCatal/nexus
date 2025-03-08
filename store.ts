@@ -9,18 +9,19 @@ export type BasketItem = {
 
 type BasketStore = {
   items: BasketItem[];
+  totalItemsCount: number; // 🔥 Burada state olarak tutuyoruz
+  totalPrice: number; // 🔥 Burada state olarak tutuyoruz
   addItem: (product: Product) => void;
   removeItem: (productId: string) => void;
   clearBasket: () => void;
-  getTotalPrice: () => void;
-  getItemCount: (productId: string) => void;
-  getAllItems: () => BasketItem[];
 };
 
 export const useBasketStore = create<BasketStore>()(
   persist(
     (set, get) => ({
       items: [],
+      totalItemsCount: 0, // 🔥 Başlangıç değeri
+      totalPrice: 0, // 🔥 Başlangıç değeri
 
       addItem: (product) =>
         set((state) => {
@@ -28,53 +29,74 @@ export const useBasketStore = create<BasketStore>()(
             (item) => item.product._id === product._id
           );
 
+          let updatedItems;
           if (existingItem) {
-            return {
-              items: state.items.map((item) =>
-                item.product._id === product._id
-                  ? { ...item, quantity: item.quantity + 1 }
-                  : item
-              ),
-            };
+            updatedItems = state.items.map((item) =>
+              item.product._id === product._id
+                ? { ...item, quantity: item.quantity + 1 }
+                : item
+            );
           } else {
-            return { items: [...state.items, { product, quantity: 1 }] };
+            updatedItems = [...state.items, { product, quantity: 1 }];
           }
+
+          return {
+            items: updatedItems,
+            totalItemsCount: updatedItems.reduce(
+              (total, item) => total + item.quantity,
+              0
+            ), // 🔥 Güncellendi
+            totalPrice: updatedItems.reduce(
+              (total, item) =>
+                total +
+                (item.product.salePercentage
+                  ? (item.product.price ?? 0) -
+                    ((item.product.price ?? 0) * item.product.salePercentage) /
+                      100
+                  : (item.product.price ?? 0)) *
+                  item.quantity,
+              0
+            ), // 🔥 Güncellendi
+          };
         }),
 
       removeItem: (productId) =>
-        set((state) => ({
-          items: state.items.reduce((acc, item) => {
+        set((state) => {
+          const updatedItems = state.items.reduce((acc, item) => {
             if (item.product._id === productId) {
               if (item.quantity > 1) {
                 acc.push({ ...item, quantity: item.quantity - 1 });
-              } else {
-                acc.push(item);
               }
+            } else {
+              acc.push(item);
             }
             return acc;
-          }, [] as BasketItem[]),
-        })),
+          }, [] as BasketItem[]);
 
-      clearBasket: () => set({ items: [] }),
+          return {
+            items: updatedItems,
+            totalItemsCount: updatedItems.reduce(
+              (total, item) => total + item.quantity,
+              0
+            ), // 🔥 Güncellendi
+            totalPrice: updatedItems.reduce(
+              (total, item) =>
+                total +
+                (item.product.salePercentage
+                  ? (item.product.price ?? 0) -
+                    ((item.product.price ?? 0) * item.product.salePercentage) /
+                      100
+                  : (item.product.price ?? 0)) *
+                  item.quantity,
+              0
+            ), // 🔥 Güncellendi
+          };
+        }),
 
-      getTotalPrice: () => {
-        return get().items.reduce(
-          (total, item) => total + (item.product.price ?? 0) * item.quantity,
-          0
-        );
-      },
-
-      getItemCount: (productId) => {
-        const item = get().items.find((item) => item.product._id === productId);
-        return item ? item.quantity : 0;
-      },
-
-      getAllItems: () => {
-        return get().items;
-      },
+      clearBasket: () => set({ items: [], totalItemsCount: 0, totalPrice: 0 }), // 🔥 Hepsini sıfırla
     }),
     {
-      name: "basket-store",
+      name: "nexus-store",
     }
   )
 );

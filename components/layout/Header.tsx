@@ -1,19 +1,11 @@
-import {
-  LayoutGrid,
-  Menu,
-  Search,
-  ShoppingBasket,
-  ShoppingCart,
-} from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
-import HeaderSearchBar from "./HeaderSearchBar";
 import { ProductCategory } from "@/sanity.types";
-import CategorySelector from "../ui/categorySelector";
-import CategoryDrawer from "./CategoryDrawer";
-import SearchSheet from "./SearchSheet";
 import Basket from "../basket/Basket";
+import HeaderSearch from "./HeaderSearch";
+import HeaderCategory from "./HeaderCategory";
+import Home from "./Home";
 
 type HeaderProps = {
   categories: ProductCategory[];
@@ -21,7 +13,7 @@ type HeaderProps = {
 
 const Header = ({ categories }: HeaderProps) => {
   return (
-    <header className="bg-transparent sticky z-50 top-0 backdrop-blur-md shadow-sm  border-b px-4 sm:px-8 md:px-14 mx-auto">
+    <header className="bg-transparent sticky z-50 top-0 backdrop-blur-md shadow-sm border-b px-4 sm:px-8 md:px-14">
       {/* <div className=" flex justify-between items-center">
         <HeaderSearchBar />
         <Link href={"/"}>
@@ -40,22 +32,13 @@ const Header = ({ categories }: HeaderProps) => {
       </div> */}
       <div className=" grid grid-cols-5">
         <div className="col-span-2 place-content-center place-items-start">
-          <div className="flex gap-2 items-center justify-center">
+          <div className="flex gap-2 items-center justify-start">
             {/* todo open these for responsive design */}
             {/* <Menu className="md:hidden" />
             <Search className="md:hidden" /> */}
-            <Link href={"/"} className="font-semibold text-sm hidden sm:block">
-              Home
-            </Link>
+            <Home />
             {categories && categories.length > 0 ? (
-              <>
-                <div className="hidden sm:flex sm:items-center">
-                  <CategorySelector categories={categories} />
-                </div>
-                <div className="sm:hidden flex items-center">
-                  <CategoryDrawer categories={categories} />
-                </div>
-              </>
+              <HeaderCategory categories={categories} />
             ) : (
               <></>
             )}
@@ -71,19 +54,19 @@ const Header = ({ categories }: HeaderProps) => {
             priority
           />
         </Link>
-        <div className="col-span-2 col-start-4 place-items-end place-content-center">
-          <div className="flex items-center justify-center gap-4">
-            {/* todo change below div with other div for responsive design */}
-            {/* <div className="hidden md:block"> */}
-            <div className="hidden sm:flex sm:items-center">
+        <div className="col-span-2 col-start-4 flex items-center justify-end gap-4 ">
+          {/* todo change below div with other div for responsive design */}
+          {/* <div className="hidden md:block"> */}
+          {/* <div className="hidden sm:flex sm:items-center">
               <HeaderSearchBar />
             </div>
             <div className="sm:hidden flex items-center">
               <SearchSheet />
-            </div>
+            </div> */}
 
-            <Basket />
-          </div>
+          <HeaderSearch />
+
+          <Basket />
         </div>
       </div>
     </header>

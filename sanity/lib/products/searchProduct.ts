@@ -2,7 +2,6 @@ import { defineQuery } from "next-sanity";
 import { sanityFetch } from "../live";
 
 export const searchProduct = async (searchQuery: string) => {
-  console.log(searchQuery);
   if (!searchQuery.trim()) {
     return [];
   }

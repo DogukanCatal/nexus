@@ -1,10 +1,8 @@
+import AddToBasketButton from "@/components/basket/AddToBasketButton";
 import ImageCarousel from "@/components/product/ImageCarousel";
 import ProductDescription from "@/components/product/ProductDescription";
 import ProductPrice from "@/components/product/ProductPrice";
-import { Button } from "@/components/ui/button";
-import { urlFor } from "@/sanity/lib/image";
 import { getProductById } from "@/sanity/lib/products/getProductById";
-import Image from "next/image";
 import React from "react";
 
 const ProductPage = async ({ params }: { params: Promise<{ id: string }> }) => {
@@ -25,21 +23,12 @@ const ProductPage = async ({ params }: { params: Promise<{ id: string }> }) => {
         <ProductPrice
           price={product.price ?? 0}
           sale={product.salePercentage}
-          priceSize="large"
-          discountSize="medium"
+          priceSize={"large"}
+          discountSize={"medium"}
         />
         {/* Quantity */}
         {/* Add to cart */}
-        {isOutOfStock ? (
-          <>
-            <div className="flex items-center justify-center bg-[#262626] p-4 rounded-md">
-              <span className="font-bold text-sm">Out Of Stock</span>
-            </div>
-          </>
-        ) : (
-          <Button className="font-bold">Add to Cart</Button>
-        )}
-
+        <AddToBasketButton product={product} isOutOfStock={isOutOfStock} />
         {/* Description */}
         <ProductDescription description={product.description} />
       </div>

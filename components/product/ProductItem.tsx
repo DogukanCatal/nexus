@@ -3,7 +3,7 @@ import { Product } from "@/sanity.types";
 import { urlFor } from "@/sanity/lib/image";
 import Image from "next/image";
 import Link from "next/link";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import ProductPrice from "./ProductPrice";
 
 type ProductItemProps = {
@@ -40,6 +40,7 @@ const ProductItem = ({ product }: ProductItemProps) => {
                 ? urlFor(product.image[1]).url()
                 : urlFor(product.image[0]).url()
             }
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw,33vw"
             loading="lazy"
             className="object-cover"
           />

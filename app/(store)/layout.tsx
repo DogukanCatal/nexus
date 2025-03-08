@@ -4,6 +4,7 @@ import "../globals.css";
 import Header from "@/components/layout/Header";
 import { SanityLive } from "@/sanity/lib/live";
 import { getAllCategories } from "@/sanity/lib/products/getAllCategories";
+import Footer from "@/components/layout/Footer";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -30,12 +31,13 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased dark bg-[#131313] `}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased dark bg-[#131313] flex flex-col min-h-screen `}
       >
         {/* todo body background rengini degistir bg-[#131313] */}
         <Header categories={categories} />
-        {children}
+        <main className="flex-1">{children}</main>
         <SanityLive />
+        <Footer />
       </body>
     </html>
   );

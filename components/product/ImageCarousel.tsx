@@ -2,64 +2,41 @@
 import { Product } from "@/sanity.types";
 import { urlFor } from "@/sanity/lib/image";
 import Image from "next/image";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Button } from "../ui/button";
-import {
-  ChevronLeft,
-  ChevronLeftCircle,
-  ChevronRight,
-  ChevronRightCircle,
-} from "lucide-react";
+import { ChevronLeftCircle, ChevronRightCircle } from "lucide-react";
 import { EmblaOptionsType } from "embla-carousel";
-import useEmblaCarousel from "embla-carousel-react";
-import { Card, CardContent } from "../ui/card";
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "@/components/ui/carousel";
-import { cn } from "@/lib/utils";
 
 type ImageCarouselProps = {
   product: Product;
   options?: EmblaOptionsType;
 };
 
-const ImageCarousel = ({ product, options }: ImageCarouselProps) => {
+const ImageCarousel = ({ product }: ImageCarouselProps) => {
   const [selectedIndex, setSelectedIndex] = useState(0);
-  const [mainViewRef, mainEmbla] = useEmblaCarousel({ loop: true });
-  const [thumbViewRef, thumbEmbla] = useEmblaCarousel({
-    containScroll: "keepSnaps",
-    dragFree: true,
-  });
-  if (!product.image) {
-    return null;
-  }
+  // const [mainViewRef, mainEmbla] = useEmblaCarousel({ loop: true });
+  // const [thumbViewRef, thumbEmbla] = useEmblaCarousel({
+  //   containScroll: "keepSnaps",
+  //   dragFree: true,
+  // });
+  // if (!product.image) {
+  //   return null;
+  // }
 
-  const onThumbClick = useCallback(
-    (index: number) => {
-      if (!mainEmbla || !thumbEmbla) return;
-      mainEmbla.scrollTo(index);
-    },
-    [mainEmbla, thumbEmbla]
-  );
+  // const onSelect = useCallback(() => {
+  //   if (!mainEmbla || !thumbEmbla) return;
+  //   setSelectedIndex(mainEmbla.selectedScrollSnap());
+  //   thumbEmbla.scrollTo(mainEmbla.selectedScrollSnap());
+  // }, [mainEmbla, thumbEmbla]);
 
-  const onSelect = useCallback(() => {
-    if (!mainEmbla || !thumbEmbla) return;
-    setSelectedIndex(mainEmbla.selectedScrollSnap());
-    thumbEmbla.scrollTo(mainEmbla.selectedScrollSnap());
-  }, [mainEmbla, thumbEmbla]);
-
-  useEffect(() => {
-    if (!mainEmbla) return;
-    onSelect();
-    mainEmbla.on("select", onSelect);
-    return () => {
-      mainEmbla.off("select", onSelect);
-    };
-  }, [mainEmbla, onSelect]);
+  // useEffect(() => {
+  //   if (!mainEmbla) return;
+  //   onSelect();
+  //   mainEmbla.on("select", onSelect);
+  //   return () => {
+  //     mainEmbla.off("select", onSelect);
+  //   };
+  // }, [mainEmbla, onSelect]);
 
   const HandleRightClick = () => {
     if (product.image && selectedIndex < product.image.length - 1) {
