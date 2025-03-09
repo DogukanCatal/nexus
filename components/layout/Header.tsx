@@ -44,16 +44,18 @@ const Header = ({ categories }: HeaderProps) => {
             )}
           </div>
         </div>
-        <Link href={"/"} className="col-start-3 place-items-center">
-          <Image
-            src="/logo.png"
-            alt="Brand Logo"
-            width={50}
-            height={50}
-            className="h-auto w-auto max-h-16 sm:max-h-14 md:max-h-12 lg:max-h-16"
-            priority
-          />
-        </Link>
+        <div className=" col-start-3 flex items-center justify-center">
+          <Link href={"/"} className="">
+            <Image
+              src="/logo.png"
+              alt="Brand Logo"
+              width={50}
+              height={50}
+              className="h-auto w-auto max-h-16 sm:max-h-14 md:max-h-12 lg:max-h-16"
+              priority
+            />
+          </Link>
+        </div>
         <div className="col-span-2 col-start-4 flex items-center justify-end gap-4 ">
           {/* todo change below div with other div for responsive design */}
           {/* <div className="hidden md:block"> */}

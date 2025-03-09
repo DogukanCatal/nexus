@@ -9,16 +9,23 @@ import ProductPrice from "../product/ProductPrice";
 import { Minus, Plus } from "lucide-react";
 
 const BasketProductView = () => {
-  const { items, totalItemsCount, totalPrice, removeItem, addItem } =
-    useBasketStore(
-      useShallow((state) => ({
-        items: state.items,
-        totalItemsCount: state.totalItemsCount,
-        totalPrice: state.totalPrice,
-        removeItem: state.removeItem,
-        addItem: state.addItem,
-      }))
-    );
+  const {
+    items,
+    totalItemsCount,
+    totalPrice,
+    removeItem,
+    addItem,
+    clearBasket,
+  } = useBasketStore(
+    useShallow((state) => ({
+      items: state.items,
+      totalItemsCount: state.totalItemsCount,
+      totalPrice: state.totalPrice,
+      removeItem: state.removeItem,
+      addItem: state.addItem,
+      clearBasket: state.clearBasket,
+    }))
+  );
 
   if (!items || items.length <= 0) {
     return (
@@ -84,8 +91,13 @@ const BasketProductView = () => {
           ))}
       </div>
       <div className="w-full p-6 border-t-2 space-y-4 ">
-        <div>
-          <span className="">Clear Basket</span>
+        <div
+          className="flex items-center justify-center cursor-pointer"
+          onClick={() => clearBasket()}
+        >
+          <span className="font-semibold border-b-2 border-red-700 text-red-700">
+            Clear Basket
+          </span>
         </div>
         <div>
           <span className="font-bold">Total Price: </span>
