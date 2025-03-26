@@ -1,6 +1,7 @@
 import { Product } from "./sanity.types";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import { xorDecrypt, xorEncrypt, SECRET_KEY } from "@/utils/xorCrypto";
 
 export type BasketItem = {
   product: Product;
@@ -97,6 +98,26 @@ export const useBasketStore = create<BasketStore>()(
     }),
     {
       name: "nexus-store",
+      storage: {
+        getItem: (name) => {
+          const encoded = localStorage.getItem(name);
+          if (!encoded) return null;
+          try {
+            const decrypted = xorDecrypt(encoded, SECRET_KEY);
+            return JSON.parse(decrypted);
+          } catch (e) {
+            console.warn("[BasketStore] Decryption failed, resetting store.");
+            localStorage.removeItem(name);
+            return null;
+          }
+        },
+        setItem: (name, value) => {
+          const raw = JSON.stringify(value);
+          const encrypted = xorEncrypt(raw, SECRET_KEY);
+          localStorage.setItem(name, encrypted);
+        },
+        removeItem: (name) => localStorage.removeItem(name),
+      },
     }
   )
 );

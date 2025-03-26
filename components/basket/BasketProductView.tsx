@@ -7,6 +7,7 @@ import Image from "next/image";
 import { urlFor } from "@/sanity/lib/image";
 import ProductPrice from "../product/ProductPrice";
 import { Minus, Plus } from "lucide-react";
+import Link from "next/link";
 
 const BasketProductView = () => {
   const {
@@ -103,7 +104,11 @@ const BasketProductView = () => {
           <span className="font-bold">Total Price: </span>
           <span className="font-bold">{totalPrice.toFixed(2)} TL</span>
         </div>
-        <Button className="w-full font-bold">Check Out</Button>
+        <Link href="/checkout">
+          <div className="w-full my-4 bg-white text-black p-2 rounded-lg flex items-center justify-center font-bold">
+            Check Out
+          </div>
+        </Link>
       </div>
     </div>
   );
