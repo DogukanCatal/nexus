@@ -20,6 +20,10 @@ const Basket = () => {
     }))
   );
 
+  const changeSetOpen = () => {
+    setOpen(!open);
+  };
+
   return (
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger>
@@ -39,7 +43,7 @@ const Basket = () => {
         <SheetHeader>
           <SheetTitle></SheetTitle>
         </SheetHeader>
-        <BasketProductView />
+        <BasketProductView setOpen={changeSetOpen} />
       </SheetContent>
     </Sheet>
   );
