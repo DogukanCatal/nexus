@@ -10,6 +10,7 @@
     "typegen": "npx sanity@latest schema extract && npx sanity@latest typegen generate"
   },
   "dependencies": {
+    "@hookform/resolvers": "^5.0.1",
     "@radix-ui/react-accordion": "^1.2.3",
     "@radix-ui/react-dialog": "^1.1.6",
     "@radix-ui/react-popover": "^1.1.6",
@@ -25,12 +26,14 @@
     "next-sanity": "^9.8.59",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "react-hook-form": "^7.56.2",
     "react-is": "^19.0.0",
     "sanity": "^3.76.3",
     "styled-components": "^6.1.15",
     "tailwind-merge": "^3.0.2",
     "tailwindcss-animate": "^1.0.7",
     "vaul": "^1.1.2",
+    "zod": "^3.24.3",
     "zustand": "^5.0.3"
   },
   "devDependencies": {
