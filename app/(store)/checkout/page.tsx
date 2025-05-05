@@ -1,6 +1,5 @@
 "use client";
-import PlaceOrder from "@/components/checkout/PlaceOrder";
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import { checkoutSchema, CheckoutFormData } from "@/lib/checkoutSchema";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -8,6 +7,11 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import submitCheckout from "./actions/submitCheckout";
 import { getSecureCart } from "@/utils/getSecureCart";
+import { useBasketStore } from "@/store";
+import { useShallow } from "zustand/shallow";
+import { useRouter } from "next/navigation";
+import validateBasketProducts from "./actions/validateBasketProducts";
+import BasketProductView from "@/components/basket/BasketProductView";
 
 const CheckoutPage = () => {
   const {
@@ -24,6 +28,46 @@ const CheckoutPage = () => {
       phoneNumber: "",
     },
   });
+  const {
+    items,
+    totalItemsCount,
+    totalPrice,
+    removeItem,
+    addItem,
+    bulkUpdateItems,
+    _hasHydrated,
+  } = useBasketStore(
+    useShallow((state) => ({
+      items: state.items,
+      totalItemsCount: state.totalItemsCount,
+      totalPrice: state.totalPrice,
+      removeItem: state.removeItem,
+      addItem: state.addItem,
+      bulkUpdateItems: state.bulkUpdateItems,
+      _hasHydrated: state._hasHydrated,
+    }))
+  );
+
+  const router = useRouter();
+  const hasValidatedRef = useRef(false);
+
+  useEffect(() => {
+    const validateProducts = async () => {
+      try {
+        const products = await validateBasketProducts(items);
+        bulkUpdateItems(products);
+        console.log(items);
+      } catch (error) {
+        console.log("Failed to validate basket products.");
+      }
+    };
+    if (_hasHydrated && items.length === 0) {
+      router.replace("/");
+    } else if (_hasHydrated && items.length > 0 && !hasValidatedRef.current) {
+      hasValidatedRef.current = true;
+      validateProducts();
+    }
+  }, [_hasHydrated, items]);
 
   const onSubmit = async (data: CheckoutFormData) => {
     const cart = getSecureCart();
@@ -33,8 +77,6 @@ const CheckoutPage = () => {
       localStorage.clear();
       window.location.reload();
     }
-    console.log(cart);
-    console.log(data);
     const formData = new FormData();
     Object.entries(data).forEach(([key, value]) => formData.append(key, value));
 
@@ -42,81 +84,78 @@ const CheckoutPage = () => {
   };
 
   return (
-    <div className="mx-auto container flex flex-col gap-6 justify-start items-center p-4 sm:p-8 md:p-14">
+    <div className="mx-auto container p-6 sm:p-8 md:p-14">
       <form
         onSubmit={(e) => {
           e.preventDefault();
           handleSubmit(onSubmit)();
         }}
+        className="w-full max-w-xl"
       >
-        <fieldset>
-          <label htmlFor="name">Name</label>
-          <Input
-            type="text"
-            {...register("name")}
-            placeholder="name"
-            className={errors.name ? "border-red-500" : ""}
-            required
-          />
-          {errors?.name && (
-            <p className="text-sm text-red-500">{errors?.name.message}</p>
-          )}
-        </fieldset>
+        <div className="flex flex-col space-y-6 w-full justify-start">
+          <fieldset>
+            <label htmlFor="name">Name</label>
+            <Input
+              type="text"
+              {...register("name")}
+              placeholder="name"
+              className={` ${errors.name ? "border-red-500" : ""}`}
+            />
+            {errors?.name && (
+              <p className="text-sm text-red-500">{errors?.name.message}</p>
+            )}
+          </fieldset>
 
-        <fieldset>
-          <label htmlFor="surname">Surname</label>
-          <Input
-            type="text"
-            {...register("surname")}
-            placeholder="surname"
-            required
-          />
-          {errors?.surname && (
-            <p className="text-sm text-red-500">{errors.surname?.message}</p>
-          )}
-        </fieldset>
+          <fieldset>
+            <label htmlFor="surname">Surname</label>
+            <Input type="text" {...register("surname")} placeholder="surname" />
+            {errors?.surname && (
+              <p className="text-sm text-red-500">{errors.surname?.message}</p>
+            )}
+          </fieldset>
 
-        <fieldset>
-          <label htmlFor="email">Email</label>
-          <Input
-            type="text"
-            {...register("email")}
-            placeholder="email"
-            required
-          />
-          {errors?.email && (
-            <p className="text-sm text-red-500">{errors.email.message}</p>
-          )}
-        </fieldset>
+          <fieldset>
+            <label htmlFor="email">Email</label>
+            <Input type="text" {...register("email")} placeholder="email" />
+            {errors?.email && (
+              <p className="text-sm text-red-500">{errors.email.message}</p>
+            )}
+          </fieldset>
 
-        <fieldset>
-          <label htmlFor="address">Address</label>
-          <Input
-            type="text"
-            {...register("address")}
-            placeholder="address"
-            required
-          />
-          {errors?.address && (
-            <p className="text-sm text-red-500">{errors.address.message}</p>
-          )}
-        </fieldset>
+          <fieldset>
+            <label htmlFor="address">Address</label>
+            <Input type="text" {...register("address")} placeholder="address" />
+            {errors?.address && (
+              <p className="text-sm text-red-500">{errors.address.message}</p>
+            )}
+          </fieldset>
 
-        <fieldset>
-          <label htmlFor="phoneNumber">Phone Number</label>
-          <Input
-            type="text"
-            {...register("phoneNumber")}
-            placeholder="phoneNumber"
-            required
-          />
-          {errors?.phoneNumber && (
-            <p className="text-sm text-red-500">{errors.phoneNumber.message}</p>
-          )}
-        </fieldset>
+          <fieldset>
+            <label htmlFor="phoneNumber">Phone Number</label>
+            <Input
+              type="text"
+              {...register("phoneNumber")}
+              placeholder="phoneNumber"
+            />
+            {errors?.phoneNumber && (
+              <p className="text-sm text-red-500">
+                {errors.phoneNumber.message}
+              </p>
+            )}
+          </fieldset>
 
-        <Button type="submit">Place Order Form</Button>
+          <p className="font-bold text-sm">
+            *Only payment option is at the door
+          </p>
+
+          <div className="flex justify-center">
+            <Button className="w-full mx-10" type="submit">
+              Place Order
+            </Button>
+          </div>
+        </div>
       </form>
+      <BasketProductView></BasketProductView>
       {/* <PlaceOrder /> */}
     </div>
   );

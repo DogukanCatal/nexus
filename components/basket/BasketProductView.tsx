@@ -1,14 +1,13 @@
 "use client";
 import { useBasketStore } from "@/store";
-import React, { SetStateAction } from "react";
 import { useShallow } from "zustand/shallow";
+import React from "react";
 import { Button } from "../ui/button";
 import Image from "next/image";
 import { urlFor } from "@/sanity/lib/image";
 import ProductPrice from "../product/ProductPrice";
 import { Minus, Plus } from "lucide-react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 
 const BasketProductView = ({ setOpen }: any) => {
   const {

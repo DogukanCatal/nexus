@@ -13,8 +13,11 @@ type BasketStore = {
   totalItemsCount: number; // 🔥 Burada state olarak tutuyoruz
   totalPrice: number; // 🔥 Burada state olarak tutuyoruz
   addItem: (product: Product) => void;
+  bulkUpdateItems: (validatedProducts: Product[]) => void;
   removeItem: (productId: string) => void;
   clearBasket: () => void;
+  _hasHydrated: boolean;
+  setHasHydrated: (state: boolean) => void;
 };
 
 export const useBasketStore = create<BasketStore>()(
@@ -23,6 +26,8 @@ export const useBasketStore = create<BasketStore>()(
       items: [],
       totalItemsCount: 0, // 🔥 Başlangıç değeri
       totalPrice: 0, // 🔥 Başlangıç değeri
+      _hasHydrated: false,
+      setHasHydrated: (state: boolean) => set({ _hasHydrated: state }),
 
       addItem: (product) =>
         set((state) => {
@@ -40,6 +45,59 @@ export const useBasketStore = create<BasketStore>()(
           } else {
             updatedItems = [...state.items, { product, quantity: 1 }];
           }
+
+          return {
+            items: updatedItems,
+            totalItemsCount: updatedItems.reduce(
+              (total, item) => total + item.quantity,
+              0
+            ), // 🔥 Güncellendi
+            totalPrice: updatedItems.reduce(
+              (total, item) =>
+                total +
+                (item.product.salePercentage
+                  ? (item.product.price ?? 0) -
+                    ((item.product.price ?? 0) * item.product.salePercentage) /
+                      100
+                  : (item.product.price ?? 0)) *
+                  item.quantity,
+              0
+            ), // 🔥 Güncellendi
+          };
+        }),
+
+      bulkUpdateItems: (validatedProducts) =>
+        set((state) => {
+          const updatedItems = state.items
+            .map((item) => {
+              const updatedProduct = validatedProducts.find(
+                (p) => p._id === item.product._id
+              );
+              if (
+                updatedProduct &&
+                updatedProduct.stock &&
+                updatedProduct.stock > 0
+              ) {
+                return { product: updatedProduct, quantity: item.quantity };
+              } else {
+                return null;
+              }
+            })
+            .filter((item): item is BasketItem => item !== null);
+          // const existingItem = state.items.find(
+          //   (item) => item.product._id === product._id
+          // );
+
+          // let updatedItems;
+          // if (existingItem) {
+          //   updatedItems = state.items.map((item) =>
+          //     item.product._id === product._id
+          //       ? { ...item, quantity: item.quantity }
+          //       : item
+          //   );
+          // } else {
+          //   updatedItems = [...state.items, { product, quantity: 1 }];
+          // }
 
           return {
             items: updatedItems,
@@ -98,6 +156,9 @@ export const useBasketStore = create<BasketStore>()(
     }),
     {
       name: "nexus-store",
+      onRehydrateStorage: () => (state) => {
+        state?.setHasHydrated(true);
+      },
       storage: {
         getItem: (name) => {
           const encoded = localStorage.getItem(name);
