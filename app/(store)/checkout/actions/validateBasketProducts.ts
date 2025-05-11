@@ -1,5 +1,4 @@
 "use server";
-import { Product } from "@/sanity.types";
 import { getAllBasketProducts } from "@/sanity/lib/products/getAllBasketProducts";
 import { BasketItem } from "@/store";
 

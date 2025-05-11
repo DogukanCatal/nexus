@@ -9,7 +9,11 @@ import ProductPrice from "../product/ProductPrice";
 import { Minus, Plus } from "lucide-react";
 import Link from "next/link";
 
-const BasketProductView = ({ setOpen }: any) => {
+type BasketProductViewProps = {
+  setOpen?: () => void;
+};
+
+const BasketProductView = ({ setOpen }: BasketProductViewProps) => {
   const {
     items,
     totalItemsCount,

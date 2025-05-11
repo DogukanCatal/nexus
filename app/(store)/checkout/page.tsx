@@ -11,7 +11,6 @@ import { useBasketStore } from "@/store";
 import { useShallow } from "zustand/shallow";
 import { useRouter } from "next/navigation";
 import validateBasketProducts from "./actions/validateBasketProducts";
-import BasketProductView from "@/components/basket/BasketProductView";
 
 const CheckoutPage = () => {
   const {
@@ -28,25 +27,18 @@ const CheckoutPage = () => {
       phoneNumber: "",
     },
   });
-  const {
-    items,
-    totalItemsCount,
-    totalPrice,
-    removeItem,
-    addItem,
-    bulkUpdateItems,
-    _hasHydrated,
-  } = useBasketStore(
-    useShallow((state) => ({
-      items: state.items,
-      totalItemsCount: state.totalItemsCount,
-      totalPrice: state.totalPrice,
-      removeItem: state.removeItem,
-      addItem: state.addItem,
-      bulkUpdateItems: state.bulkUpdateItems,
-      _hasHydrated: state._hasHydrated,
-    }))
-  );
+  const { items, totalItemsCount, totalPrice, bulkUpdateItems, _hasHydrated } =
+    useBasketStore(
+      useShallow((state) => ({
+        items: state.items,
+        totalItemsCount: state.totalItemsCount,
+        totalPrice: state.totalPrice,
+        removeItem: state.removeItem,
+        addItem: state.addItem,
+        bulkUpdateItems: state.bulkUpdateItems,
+        _hasHydrated: state._hasHydrated,
+      }))
+    );
 
   const router = useRouter();
   const hasValidatedRef = useRef(false);
@@ -58,7 +50,7 @@ const CheckoutPage = () => {
         bulkUpdateItems(products);
         console.log(items);
       } catch (error) {
-        console.log("Failed to validate basket products.");
+        console.log("Failed to validate basket products.", error);
       }
     };
     if (_hasHydrated && items.length === 0) {
@@ -67,7 +59,7 @@ const CheckoutPage = () => {
       hasValidatedRef.current = true;
       validateProducts();
     }
-  }, [_hasHydrated, items]);
+  }, [_hasHydrated, items, bulkUpdateItems, router]);
 
   const onSubmit = async (data: CheckoutFormData) => {
     const cart = getSecureCart();
@@ -80,7 +72,17 @@ const CheckoutPage = () => {
     const formData = new FormData();
     Object.entries(data).forEach(([key, value]) => formData.append(key, value));
 
-    const result = await submitCheckout(null, formData);
+    const result = await submitCheckout(
+      null,
+      formData,
+      items,
+      totalPrice,
+      totalItemsCount
+    );
+    if (result && result.success) {
+      localStorage.clear();
+      window.location.reload();
+    }
   };
 
   return (
@@ -135,7 +137,7 @@ const CheckoutPage = () => {
             <Input
               type="text"
               {...register("phoneNumber")}
-              placeholder="phoneNumber"
+              placeholder="phone number"
             />
             {errors?.phoneNumber && (
               <p className="text-sm text-red-500">
@@ -155,7 +157,7 @@ const CheckoutPage = () => {
           </div>
         </div>
       </form>
-      <BasketProductView></BasketProductView>
+      {/* <BasketProductView></BasketProductView> */}
       {/* <PlaceOrder /> */}
     </div>
   );

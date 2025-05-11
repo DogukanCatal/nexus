@@ -68,6 +68,36 @@ export type Geopoint = {
   alt?: number;
 };
 
+export type OrderProduct = {
+  _type: "orderProduct";
+  product?: {
+    _ref: string;
+    _type: "reference";
+    _weak?: boolean;
+    [internalGroqTypeReferenceTo]?: "product";
+  };
+  quantity?: number;
+};
+
+export type Order = {
+  _id: string;
+  _type: "order";
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  orderNumber?: string;
+  name?: string;
+  surname?: string;
+  email?: string;
+  address?: string;
+  phoneNumber?: string;
+  totalPrice?: number;
+  products?: Array<{
+    _key: string;
+  } & OrderProduct>;
+  status?: "pending" | "delivered" | "cancelled";
+};
+
 export type ProductCategory = {
   _id: string;
   _type: "productCategory";
@@ -175,7 +205,7 @@ export type Slug = {
   source?: string;
 };
 
-export type AllSanitySchemaTypes = SanityImagePaletteSwatch | SanityImagePalette | SanityImageDimensions | SanityFileAsset | Geopoint | ProductCategory | Product | SanityImageCrop | SanityImageHotspot | SanityImageAsset | SanityAssetSourceData | SanityImageMetadata | Slug;
+export type AllSanitySchemaTypes = SanityImagePaletteSwatch | SanityImagePalette | SanityImageDimensions | SanityFileAsset | Geopoint | OrderProduct | Order | ProductCategory | Product | SanityImageCrop | SanityImageHotspot | SanityImageAsset | SanityAssetSourceData | SanityImageMetadata | Slug;
 export declare const internalGroqTypeReferenceTo: unique symbol;
 // Source: ./sanity/lib/products/getAllBasketProducts.ts
 // Variable: ALL_BASKET_PRODUCTS
